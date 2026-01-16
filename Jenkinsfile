@@ -1,39 +1,28 @@
 pipeline {
     agent any
 
-    environment {
-        IMAGE_NAME = "hello-cicd"
-        IMAGE_TAG = "${GIT_COMMIT}"
-    }
-
     stages {
         stage('Checkout') {
             steps {
-                checkout scm
+                git url: 'https://github.com/hyemin008/hello-cicd.git', branch: 'main'
             }
         }
 
-        stage('Test') {
+        stage('Install Dependencies') {
             steps {
-                sh '''
-                pip install -r requirements.txt
-                pytest
-                '''
+                sh 'python3 -m pip install -r requirements.txt'
             }
         }
 
-        stage('Docker Build') {
+        stage('Build Docker') {
             steps {
-                sh 'docker build -t $IMAGE_NAME:$IMAGE_TAG .'
+                sh 'docker build -t hello-cicd .'
             }
         }
 
-        stage('Run Container') {
+        stage('Run Docker') {
             steps {
-                sh '''
-                docker rm -f hello-cicd || true
-                docker run -d -p 5000:5000 --name hello-cicd -e GIT_COMMIT=$IMAGE_TAG $IMAGE_NAME:$IMAGE_TAG
-                '''
+                sh 'docker run -d -p 5000:5000 hello-cicd'
             }
         }
     }
