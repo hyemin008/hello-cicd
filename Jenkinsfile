@@ -9,11 +9,11 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/너의아이디/hello-cicd.git'
+                checkout scm
             }
         }
 
-        stage('Install & Test') {
+        stage('Test') {
             steps {
                 sh '''
                 pip install -r requirements.txt
@@ -34,8 +34,7 @@ pipeline {
             steps {
                 sh '''
                 docker rm -f hello-cicd || true
-                docker run -d \
-                  -p 5000:5000 \
+                docker run -d -p 5000:5000 \
                   --name hello-cicd \
                   -e GIT_COMMIT=$IMAGE_TAG \
                   $IMAGE_NAME:$IMAGE_TAG
