@@ -5,7 +5,7 @@ app = Flask(__name__)
 
 @app.route("/")
 def hello():
-    commit = os.getenv("GIT_COMMIT", "unknown")
+    commit = os.environ.get("GIT_COMMIT", "local")
     return f"Hello from Jenkins! Commit: {commit}"
 
 if __name__ == "__main__":
